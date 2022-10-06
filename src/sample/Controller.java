@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.InputEvent;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -63,14 +62,13 @@ public class Controller {
         minimize.setOnMouseClicked(mouseEvent -> stage.setIconified(true));
 
         try {
-            DictionaryManagement.insertFromFile("D:/java/Dictionary/Dictionary_v3.1/src/resource/dictionaries.txt");
+            DictionaryManagement.insertFromFile("D:\\java\\Dictionary\\Dictionary_v3.1\\src\\data\\1900w_E-V.txt");
             DictionaryManagement.loadToList(DictionaryManagement.dictionary.trie.root,DictionaryManagement.dictionary.list1);
             showList(listView, DictionaryManagement.dictionary.list1);
         } catch (IOException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
-
 
     @FXML
     protected void showAllWord(InputEvent inputEvent) {
@@ -101,14 +99,10 @@ public class Controller {
         StatusText.clear();
     }
 
-
     public void addWord(ActionEvent event) throws IllegalAccessException {
         String word = EText.getText();
         String meaning = VText.getText();
-        if (DictionaryManagement.isExist(word,meaning) == 2) {
-            DictionaryManagement.insert(word, meaning);
-            StatusText.setText("Đã thêm nghĩa mới của từ " + word + " vào từ điển.");
-        } else {
+        if (DictionaryManagement.isExist(word,meaning) == 1) {
             DictionaryManagement.insert(word, meaning);
             StatusText.setText("Đã thêm từ mới " + word + " vào từ điển.");
         }
@@ -116,11 +110,15 @@ public class Controller {
         VText.clear();
     }
 
-    public void modifyWord(ActionEvent event) {
+    public void modifyWord(ActionEvent event) throws IllegalAccessException {
         String word = EText.getText();
         String meaning = VText.getText();
-
+        if (DictionaryManagement.isExist(word, meaning) == 2) {
+            DictionaryManagement.insert(word, meaning);
+            StatusText.setText("Đã thêm nghĩa mới của từ " + word + " vào từ điển.");
+        }
     }
+
     public void pronounce_E(ActionEvent event) {
         String textPronounce1 = EText.getText();
         Audio.Text_Speech(textPronounce1);
@@ -132,7 +130,6 @@ public class Controller {
         confirmAlert.setTitle("Wait a minute");
         confirmAlert.setHeaderText("Bạn có chắc muốn xóa từ " + word + " khỏi từ điển?");
         confirmAlert.setContentText("");
-        confirmAlert.setGraphic(new ImageView(this.getClass().getResource("D/").toString()));
 
         Optional<ButtonType> result = confirmAlert.showAndWait();
         if (result.get() == ButtonType.OK) {
@@ -146,11 +143,6 @@ public class Controller {
             StatusText.setText("May cho mày đấy " + word + " ༼ つ ◕_◕ ༽つ");
         }
     }
-
-    public void confirmationAlert(MouseEvent mouseEvent) {
-
-    }
-
 
     public void saveFile(ActionEvent event) throws FileNotFoundException, UnsupportedEncodingException {
 
